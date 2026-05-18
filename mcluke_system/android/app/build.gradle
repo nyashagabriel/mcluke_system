@@ -52,10 +52,12 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.debug
-            
-            // CRITICAL: Bakes in the Android 12+ size optimizations natively
-            minifyEnabled true
-            shrinkResources true
+
+            // Disabled minification/shrinking for debugging silent release crashes.
+            // If you need code shrinking for release, add proper ProGuard/R8 rules
+            // and test incrementally.
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }
