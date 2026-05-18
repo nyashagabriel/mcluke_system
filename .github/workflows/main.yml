@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
-    # CRITICAL: Maps all run commands to the nested Flutter directory
     defaults:
       run:
         working-directory: ./mcluke_system
@@ -38,22 +37,13 @@ jobs:
           flutter pub get
           dart run build_runner build --delete-conflicting-outputs
 
-      - name: Enable Aggressive R8/Proguard Optimization
-        run: |
-          cd android
-          # Forces gradle to run aggressive minification and resource stripping
-          sed -i 's/minifyEnabled false/minifyEnabled true/g' app/build.gradle
-          if ! grep -q "shrinkResources" app/build.gradle; then
-            sed -i '/minifyEnabled true/a \        shrinkResources true' app/build.gradle
-          fi
-
-      - name: Build Optimized Production App Bundle (.aab)
-        run: flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
+      # FIXED: Removed the dangerous sed script and obfuscation flags that break Injectable/Hive
+      - name: Build Stable Production App Bundle (.aab)
+        run: flutter build appbundle --release
 
       - name: Build Split Target APKs for Internal Testing
-        run: flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/app/outputs/symbols
+        run: flutter build apk --release --split-per-abi
 
-      # Note: Upload steps run from the repo root, so we prepend the directory name to the paths
       - name: Upload Production App Bundle
         uses: actions/upload-artifact@v4
         with:
