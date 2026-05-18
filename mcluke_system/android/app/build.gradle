@@ -53,11 +53,11 @@ android {
         release {
             signingConfig signingConfigs.debug
 
-            // Disabled minification/shrinking for debugging silent release crashes.
-            // If you need code shrinking for release, add proper ProGuard/R8 rules
-            // and test incrementally.
-            minifyEnabled false
-            shrinkResources false
+            // Enabled minification/shrinking for production to reduce app size.
+            // Keep obfuscation off unless you have verified keep rules for all plugins.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
